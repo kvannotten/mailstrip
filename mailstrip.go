@@ -1,3 +1,32 @@
+// mailstrip is a small package to parse plain text email content.  The goal is
+// to identify which fragments are quoted, part of a signature, or original
+// body content.  We want to support both top and bottom posters, so no simple
+// "REPLY ABOVE HERE" content is used.
+//
+// Beyond RFC 5322 (which is handled by the [Ruby mail gem][mail]), there
+// aren't any real standards for how emails are created.  This attempts to
+// parse out common conventions for things like replies:
+//
+//     this is some text
+//
+//     On <date>, <author> wrote:
+//     > blah blah
+//     > blah blah
+//
+// ... and signatures:
+//
+//     this is some text
+//
+//     --
+//     Bob
+//     http://homepage.com/~bob
+//
+// Each of these are parsed into Fragment objects.
+//
+// mailstrip also attempts to figure out which of these blocks should be hidden
+// from users.
+//
+// [mail]: https://github.com/mikel/mail
 package mailstrip
 
 import (
