@@ -1,7 +1,7 @@
 # mailstrip
 
 mailstrip is a [Go][2] library that parses email text and strips it of
-signatures and reply quotes. It is based on [email\_reply\_parser][1], GitHub's
+signatures and reply quotes. It is a port of [email\_reply\_parser][1], GitHub's
 library for parsing email replies.
 
 ## Status
