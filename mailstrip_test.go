@@ -20,7 +20,7 @@ var tests = []struct {
 				hidden:    false,
 				quoted:    false,
 				signature: false,
-				text: equalsString(`Hi folks
+				content: equalsString(`Hi folks
 
 What is the best way to clear a Riak bucket of all key, values after
 running a test?
@@ -31,13 +31,13 @@ I am currently using the Java HTTP API.
 				hidden:    true,
 				quoted:    false,
 				signature: true,
-				text:      nil,
+				content:   nil,
 			},
 			{
 				hidden:    true,
 				quoted:    false,
 				signature: true,
-				text:      nil,
+				content:   nil,
 			},
 		},
 	},
@@ -78,8 +78,10 @@ func TestParse(t *testing.T) {
 				t.Errorf("Signature(): %d != %d", signature, expectedFragment.signature)
 			}
 
-			if s := fragment.String(); !expectedFragment.text.MatchString(s) {
-				t.Errorf("String(): %q did not match: %#v", s, fragment.text)
+			if expectedFragment.content != nil {
+				if s := fragment.String(); !expectedFragment.content.MatchString(s) {
+					t.Errorf("String(): %q did not match: %#v", s, fragment.content)
+				}
 			}
 		}
 	}
@@ -89,7 +91,7 @@ type expectedFragment struct {
 	hidden    bool          // expected Hidden() value
 	quoted    bool          // expected Quoted() value
 	signature bool          // expected Signature() value
-	text      stringMatcher // expected String() value
+	content   stringMatcher // expected String() value
 }
 
 type stringMatcher interface {
