@@ -57,9 +57,9 @@ type parser struct {
 // regular expressions
 var (
 	multiLineReplyHeaderRegexp = regexp.MustCompile("(?m)^(On\\s(?:.+)wrote:)$")
-	sigRegexp                  = regexp.MustCompile("(--|__|\\w-$)|(^(\\w+\\s*){1,3} " + reverseString("Sent from my") + "$)")
+	sigRegexp                  = regexp.MustCompile("(--|__|\\w-$)|(?m)(^(\\w+\\s*){1,3} " + reverseString("Sent from my") + "$)")
 	quotedRegexp               = regexp.MustCompile("(>+)$")
-	quoteHeaderRegexp          = regexp.MustCompile("^:etorw.*nO$")
+	quoteHeaderRegexp          = regexp.MustCompile("(?m)^:etorw.*nO$")
 )
 
 func (p *parser) Parse(text string) (Email, error) {
