@@ -3,6 +3,7 @@ package mailstrip
 import (
 	"io/ioutil"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"testing"
 )
@@ -49,19 +50,19 @@ I am currently using the Java HTTP API.
 				hidden:    false,
 				quoted:    false,
 				signature: false,
-				content:   nil,
+				content:   regexp.MustCompile("(?m)^Oh thanks.\n\nHaving"),
 			},
 			{
 				hidden:    true,
 				quoted:    false,
 				signature: true,
-				content:   nil,
+				content:   regexp.MustCompile("(?m)^-A"),
 			},
 			{
 				hidden:    true,
 				quoted:    true,
 				signature: false,
-				content:   nil,
+				content:   regexp.MustCompile("(?m)^On [^\\:]+\\:"),
 			},
 			{
 				hidden:    true,
@@ -73,7 +74,49 @@ I am currently using the Java HTTP API.
 				hidden:    true,
 				quoted:    false,
 				signature: true,
+				content:   regexp.MustCompile("^_"),
+			},
+		},
+	},
+	{
+		"test_reads_bottom_post",
+		"email_1_2",
+		[]expectedFragment{
+			{
+				hidden:    false,
+				quoted:    false,
+				signature: false,
+				content:   equalsString("Hi,"),
+			},
+			{
+				hidden:    false,
+				quoted:    true,
+				signature: false,
+				content:   regexp.MustCompile("(?m)^On [^\\:]+\\:"),
+			},
+			{
+				hidden:    false,
+				quoted:    false,
+				signature: false,
+				content:   regexp.MustCompile("(?m)^You can list"),
+			},
+			{
+				hidden:    true,
+				quoted:    true,
+				signature: false,
+				content:   regexp.MustCompile("(?m)^> "),
+			},
+			{
+				hidden:    true,
+				quoted:    false,
+				signature: false,
 				content:   nil,
+			},
+			{
+				hidden:    true,
+				quoted:    false,
+				signature: true,
+				content:   regexp.MustCompile("(?m)^_"),
 			},
 		},
 	},
@@ -116,7 +159,7 @@ func TestParse(t *testing.T) {
 
 			if expectedFragment.content != nil {
 				if s := fragment.String(); !expectedFragment.content.MatchString(s) {
-					t.Errorf("String(): %q did not match: %#v", s, fragment.content)
+					t.Errorf("String(): %q did not match %s", s, expectedFragment.content)
 				}
 			}
 		}
