@@ -45,7 +45,7 @@ I am currently using the Java HTTP API.
 
 func TestParse(t *testing.T) {
 	for _, test := range tests {
-		t.Log(test.name)
+		t.Logf("===== %s =====", test.name)
 		text, err := loadFixture(test.fixture)
 		if err != nil {
 			t.Errorf("could not load fixture: %s", err)
@@ -65,17 +65,17 @@ func TestParse(t *testing.T) {
 
 		for i, fragment := range parsed {
 			expectedFragment := test.fragments[i]
-			t.Logf("fragment #%d", i)
+			t.Logf("--> fragment #%d", i)
 			if hidden := fragment.Hidden(); hidden != expectedFragment.hidden {
 				t.Errorf("Hidden(): %t != %t", hidden, expectedFragment.hidden)
 			}
 
 			if quoted := fragment.Quoted(); quoted != expectedFragment.quoted {
-				t.Errorf("Quoted(): %d != %d", quoted, expectedFragment.quoted)
+				t.Errorf("Quoted(): %t != %t", quoted, expectedFragment.quoted)
 			}
 
 			if signature := fragment.Signature(); signature != expectedFragment.signature {
-				t.Errorf("Signature(): %d != %d", signature, expectedFragment.signature)
+				t.Errorf("Signature(): %t != %t", signature, expectedFragment.signature)
 			}
 
 			if expectedFragment.content != nil {
