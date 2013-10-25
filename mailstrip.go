@@ -56,11 +56,12 @@ func (p *parser) Parse(text string) (Email, error) {
 		p.scanLine(scanner.Text())
 	}
 
-	p.finishFragment()
-
 	// Finish up the final fragment.  Finishing a fragment will detect any
 	// attributes (hidden, signature, reply), and join each line into a
 	// string.
+	p.finishFragment()
+
+	// Now that parsing is done, reverse the order.
 	reverseFragments(p.fragments)
 
 	// @TODO Write a test that exceeds the scanner buffer / triggers error
