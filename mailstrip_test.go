@@ -41,6 +41,42 @@ I am currently using the Java HTTP API.
 			},
 		},
 	},
+	{
+		"test_reads_top_post",
+		"email_1_3",
+		[]expectedFragment{
+			{
+				hidden:    false,
+				quoted:    false,
+				signature: false,
+				content:   nil,
+			},
+			{
+				hidden:    true,
+				quoted:    false,
+				signature: true,
+				content:   nil,
+			},
+			{
+				hidden:    true,
+				quoted:    true,
+				signature: false,
+				content:   nil,
+			},
+			{
+				hidden:    true,
+				quoted:    false,
+				signature: false,
+				content:   nil,
+			},
+			{
+				hidden:    true,
+				quoted:    false,
+				signature: true,
+				content:   nil,
+			},
+		},
+	},
 }
 
 func TestParse(t *testing.T) {
