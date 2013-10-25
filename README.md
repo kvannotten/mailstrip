@@ -10,7 +10,7 @@ Not ready.
 
 ## License
 
-TBD
+To be determined. See LICENSE file.
 
 [1]: https://github.com/github/email_reply_parser
 [2]: http://golang.org/
