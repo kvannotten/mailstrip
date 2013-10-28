@@ -53,6 +53,18 @@ type parser struct {
 	fragments []*Fragment
 }
 
+// > I define UNIX as “30 definitions of regular expressions living under one
+// > roof.”
+// —Don Knuth
+//
+// Porting the Ruby regular expressions from email_reply_parser to Go required
+// making the following changes:
+//
+// - Unlike most regexp flavors I'm familiar with, ^ and $ stand for beginning
+//   and end of line respectively in Ruby. Getting the same behavior in Go
+//   required enabling Go's multiline mode "(?m)" for these expressions.
+// - Ruby's multiline mode "/m" is the same as Go's "(?s)" flag. Both are used
+//   to make "." match "\n" characters.
 var (
 	multiLineReplyHeaderRegexp = regexp.MustCompile("(?sm)^(On\\s(?:.+)wrote:)$")
 	sigRegexp                  = regexp.MustCompile("(--|__|(?m)\\w-$)|(?m)(^(\\w+\\s*){1,3} " + reverseString("Sent from my") + "$)")
