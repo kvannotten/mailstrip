@@ -12,6 +12,8 @@ import (
 	"unicode"
 )
 
+// Parse parses a plaintext email and returns the results.
+// @TODO document what errors may occur.
 func Parse(text string) (Email, error) {
 	p := &parser{}
 	return p.Parse(text)
