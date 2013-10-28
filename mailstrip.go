@@ -53,12 +53,10 @@ type parser struct {
 	fragments []*Fragment
 }
 
-// @TODO: figure out if we should use the POSIX regexp flavor of go for our
-// regular expressions
 var (
-	multiLineReplyHeaderRegexp = regexp.MustCompile("(?m)^(On\\s(?:.+)wrote:)$")
-	sigRegexp                  = regexp.MustCompile("(--|__|\\w-$)|(?m)(^(\\w+\\s*){1,3} " + reverseString("Sent from my") + "$)")
-	quotedRegexp               = regexp.MustCompile("(>+)$")
+	multiLineReplyHeaderRegexp = regexp.MustCompile("(?sm)^(On\\s(?:.+)wrote:)$")
+	sigRegexp                  = regexp.MustCompile("(--|__|(?m)\\w-$)|(?m)(^(\\w+\\s*){1,3} " + reverseString("Sent from my") + "$)")
+	quotedRegexp               = regexp.MustCompile("(?m)(>+)$")
 	quoteHeaderRegexp          = regexp.MustCompile("(?m)^:etorw.*nO$")
 )
 
