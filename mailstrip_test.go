@@ -102,8 +102,54 @@ I am currently using the Java HTTP API.
 	{
 		"test_returns_only_the_visible_fragments_as_a_string",
 		"email_2_1",
+		// The original test re-implements the visible_text function which seems
+		// less useful than asserting on the result as i'm doing here. However, it
+		// means that this test is a duplicate of
+		// test_parse_out_just_top_for_outlook_reply.
 		[]checker{&emailStringChecker{equalsString("Outlook with a reply")}},
 	},
+	{
+		"test_parse_out_just_top_for_outlook_reply",
+		"email_2_1",
+		[]checker{&emailStringChecker{equalsString("Outlook with a reply")}},
+	},
+	{
+		"test_parse_out_sent_from_iPhone",
+		"email_iPhone",
+		[]checker{&emailStringChecker{equalsString("Here is another email")}},
+	},
+	{
+		"test_parse_out_sent_from_BlackBerry",
+		"email_BlackBerry",
+		[]checker{&emailStringChecker{equalsString("Here is another email")}},
+	},
+	{
+		"test_parse_out_send_from_multiword_mobile_device",
+		"email_multi_word_sent_from_my_mobile_device",
+		[]checker{&emailStringChecker{equalsString("Here is another email")}},
+	},
+	{
+		"test_do_not_parse_out_send_from_in_regular_sentence",
+		"email_sent_from_my_not_signature",
+		[]checker{&emailStringChecker{equalsString("Here is another email\n\nSent from my desk, is much easier then my mobile phone.")}},
+	},
+	{
+		"test_retains_bullets",
+		"email_bullets",
+		[]checker{&emailStringChecker{equalsString("test 2 this should list second\n\nand have spaces\n\nand retain this formatting\n\n\n   - how about bullets\n   - and another")}},
+	},
+	// test_parse_reply is not ported, as it's specific to the email_reply_parser
+	// API.
+	{
+		"test_one_is_not_on",
+		"email_one_is_not_on",
+		[]checker{
+			&fragmentStringChecker{0, regexp.MustCompile("One outstanding question")},
+			&fragmentStringChecker{1, regexp.MustCompile("(?m)^On Oct 1, 2012")},
+		},
+	},
+	// test_parse_reply is not ported, as it's specific to the email_reply_parser
+	// API.
 }
 
 func TestParse(t *testing.T) {
