@@ -90,6 +90,15 @@ I am currently using the Java HTTP API.
 			&contentChecker{1, regexp.MustCompile("Was this")},
 		},
 	},
+	{
+		"test_deals_with_windows_line_endings",
+		"email_1_7",
+		[]checker{
+			&contentChecker{0, regexp.MustCompile(":\\+1:")},
+			&contentChecker{1, regexp.MustCompile("(?m)^On")},
+			&contentChecker{1, regexp.MustCompile("Steps 0-2")},
+		},
+	},
 }
 
 func TestParse(t *testing.T) {
