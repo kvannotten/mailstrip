@@ -22,4 +22,6 @@ On 01/03/11 7:07 PM, Alice wrote:
 	} else {
 		fmt.Printf("result: %q\n", email.String())
 	}
+	// Output:
+	// result: "Yeah, that works!"
 }
