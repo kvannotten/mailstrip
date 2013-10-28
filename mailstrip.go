@@ -13,7 +13,8 @@ import (
 )
 
 // Parse parses a plaintext email and returns the results. May return an error
-// if the text contains a very long line (> bufio.MaxScanTokenSize = 64kb).
+// if the text contains a very long line (> bufio.MaxScanTokenSize, currently
+// 64 * 1024).
 func Parse(text string) (Email, error) {
 	p := &parser{}
 	return p.Parse(text)
