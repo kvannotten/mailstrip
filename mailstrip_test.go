@@ -66,6 +66,30 @@ I am currently using the Java HTTP API.
 			&contentChecker{1, regexp.MustCompile("Loader")},
 		},
 	},
+	{
+		"test_a_complex_body_with_only_one_fragment",
+		"email_1_5",
+		[]checker{fragmentCountChecker(1)},
+	},
+	{
+		"test_reads_email_with_correct_signature",
+		"correct_sig",
+		[]checker{
+			&attributeChecker{"Quoted", []bool{false, false}},
+			&attributeChecker{"Signature", []bool{false, true}},
+			&attributeChecker{"Hidden", []bool{false, true}},
+			&contentChecker{1, regexp.MustCompile("(?m)^-- \nrick")},
+		},
+	},
+	{
+		"test_deals_with_multiline_reply_headers",
+		"email_1_6",
+		[]checker{
+			&contentChecker{0, regexp.MustCompile("(?m)^I get")},
+			&contentChecker{1, regexp.MustCompile("(?m)^On")},
+			&contentChecker{1, regexp.MustCompile("Was this")},
+		},
+	},
 }
 
 func TestParse(t *testing.T) {
@@ -139,6 +163,17 @@ func (c *contentChecker) Check(email Email) error {
 	content := fragment.String()
 	if !c.content.MatchString(content) {
 		return fmt.Errorf("String(): %q did not match %s", content, c.content)
+	}
+	return nil
+}
+
+type fragmentCountChecker int
+
+func (c fragmentCountChecker) Check(email Email) error {
+	expectedCount := int(c)
+	gotCount := len(email)
+	if gotCount != expectedCount {
+		return fmt.Errorf("wrong fragment count: %d != %d", gotCount, expectedCount)
 	}
 	return nil
 }
