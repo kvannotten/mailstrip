@@ -1,11 +1,13 @@
 package mailstrip
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -172,6 +174,22 @@ func TestParse(t *testing.T) {
 				t.Error(err)
 			}
 		}
+	}
+}
+
+// TestLongLineError verifies the maximum supported line length. If this
+// is changed, the docs for Parse() need updating.
+func TestLongLineError(t *testing.T) {
+	maxLine := strings.Repeat("a", bufio.MaxScanTokenSize-1)
+	_, err := Parse(maxLine)
+	if err != nil {
+		t.Error(err)
+	}
+
+	tooLongLine := strings.Repeat("a", bufio.MaxScanTokenSize)
+	_, err = Parse(tooLongLine)
+	if err != bufio.ErrTooLong {
+		t.Errorf("Expected bufio.ErrTooLong, but got: %#v", err)
 	}
 }
 

@@ -12,8 +12,8 @@ import (
 	"unicode"
 )
 
-// Parse parses a plaintext email and returns the results.
-// @TODO document what errors may occur.
+// Parse parses a plaintext email and returns the results. May return an error
+// if the text contains a very long line (> bufio.MaxScanTokenSize = 64kb).
 func Parse(text string) (Email, error) {
 	p := &parser{}
 	return p.Parse(text)
@@ -81,7 +81,7 @@ func (p *parser) Parse(text string) (Email, error) {
 	// Now that parsing is done, reverse the order.
 	reverseFragments(p.fragments)
 
-	// @TODO Write a test that exceeds the scanner buffer / triggers error
+	// We might get a bufio.ErrTooLong here.
 	err := scanner.Err()
 	return Email(p.fragments), err
 }
