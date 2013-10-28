@@ -177,6 +177,7 @@ func reverseFragments(f []*Fragment) {
 	}
 }
 
+// Email contains the parsed contents of an email.
 type Email []*Fragment
 
 // String returns the non-Hidden() fragments of the Email.
@@ -195,6 +196,7 @@ func (e Email) String() string {
 	return result
 }
 
+// Fragment contains a parsed section of an email.
 type Fragment struct {
 	lines     []string
 	content   string
@@ -210,18 +212,22 @@ func (f *Fragment) finish() {
 	f.content = reverseString(f.content)
 }
 
+// Signature returns if the fragment is a signature or not.
 func (f *Fragment) Signature() bool {
 	return f.signature
 }
 
+// Signature returns if the fragment is a quote or not.
 func (f *Fragment) Quoted() bool {
 	return f.quoted
 }
 
+// Signature returns if the fragment is considered hidden or not.
 func (f *Fragment) Hidden() bool {
 	return f.hidden
 }
 
+// String returns the content of the fragment.
 func (f *Fragment) String() string {
 	return f.content
 }
