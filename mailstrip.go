@@ -57,8 +57,6 @@ func (p *parser) Parse(text string) (Email, error) {
 
 	// Check for multi-line reply headers. Some clients break up
 	// the "On DATE, NAME <EMAIL> wrote:" line into multiple lines.
-	// @TODO: email_reply_parser might be buggy here, this regexp could
-	// match several times and we should probably handle each occurence.
 	if m := multiLineReplyHeaderRegexp.FindStringSubmatch(text); len(m) == 2 {
 		// Remove all new lines from the reply header.
 		text = strings.Replace(text, m[1], strings.Replace(m[1], "\n", "", -1), -1)
