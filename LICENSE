@@ -3,8 +3,9 @@ The mailstrip go library:
 TO BE DETERMINED
 -------------------------------------------------------------------------------
 
-The content of the fixtures directory, as well as the comments copied from
-email_reply_parser:
+The content of the fixtures directory, as well as the comments are copied from
+email_reply_parser. Most of the code itself is a line-by-line port, and is
+therefor likely to be considered a derrivate work:
 -------------------------------------------------------------------------------
 The MIT License
 
