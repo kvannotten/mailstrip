@@ -125,7 +125,6 @@ func (p *parser) scanLine(line string) {
 // quoteHeader detects if a given line is a header above a quoted area.  It is
 // only checked for lines preceding quoted regions. Returns true if the line is
 // a valid header, or false.
-// @TODO: does this have to be a function?
 func (p *parser) quoteHeader(line string) bool {
 	return quoteHeaderRegexp.MatchString(line)
 }
