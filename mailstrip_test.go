@@ -150,8 +150,6 @@ I am currently using the Java HTTP API.
 			&fragmentStringChecker{1, regexp.MustCompile("(?m)^On Oct 1, 2012")},
 		},
 	},
-	// test_parse_reply is not ported, as it's specific to the email_reply_parser
-	// API.
 }
 
 func TestParse(t *testing.T) {
