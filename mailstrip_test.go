@@ -1,6 +1,7 @@
 package mailstrip
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
@@ -9,115 +10,60 @@ import (
 )
 
 var tests = []struct {
-	name      string             // name of the test, from email_reply_parser
-	fixture   string             // fixture file to parse
-	fragments []expectedFragment // expected fragments
+	name    string    // name of the test, from email_reply_parser
+	fixture string    // fixture file to parse
+	checks  []checker // checks to perform
 }{
 	{
 		"test_reads_simple_body",
 		"email_1_1",
-		[]expectedFragment{
-			{
-				hidden:    false,
-				quoted:    false,
-				signature: false,
-				content: equalsString(`Hi folks
+		[]checker{
+			&attributeChecker{"Quoted", []bool{false, false, false}},
+			&attributeChecker{"Signature", []bool{false, true, true}},
+			&attributeChecker{"Hidden", []bool{false, true, true}},
+			&contentChecker{0, equalsString(`Hi folks
 
 What is the best way to clear a Riak bucket of all key, values after
 running a test?
 I am currently using the Java HTTP API.
 `),
 			},
-			{
-				hidden:    true,
-				quoted:    false,
-				signature: true,
-				content:   nil,
-			},
-			{
-				hidden:    true,
-				quoted:    false,
-				signature: true,
-				content:   nil,
-			},
 		},
 	},
 	{
 		"test_reads_top_post",
 		"email_1_3",
-		[]expectedFragment{
-			{
-				hidden:    false,
-				quoted:    false,
-				signature: false,
-				content:   regexp.MustCompile("(?m)^Oh thanks.\n\nHaving"),
-			},
-			{
-				hidden:    true,
-				quoted:    false,
-				signature: true,
-				content:   regexp.MustCompile("(?m)^-A"),
-			},
-			{
-				hidden:    true,
-				quoted:    true,
-				signature: false,
-				content:   regexp.MustCompile("(?m)^On [^\\:]+\\:"),
-			},
-			{
-				hidden:    true,
-				quoted:    false,
-				signature: false,
-				content:   nil,
-			},
-			{
-				hidden:    true,
-				quoted:    false,
-				signature: true,
-				content:   regexp.MustCompile("^_"),
-			},
+		[]checker{
+			&attributeChecker{"Quoted", []bool{false, false, true, false, false}},
+			&attributeChecker{"Hidden", []bool{false, true, true, true, true}},
+			&attributeChecker{"Signature", []bool{false, true, false, false, true}},
+			&contentChecker{0, regexp.MustCompile("(?m)^Oh thanks.\n\nHaving")},
+			&contentChecker{1, regexp.MustCompile("(?m)^-A")},
+			&contentChecker{2, regexp.MustCompile("(?m)^On [^\\:]+\\:")},
+			&contentChecker{4, regexp.MustCompile("^_")},
 		},
 	},
 	{
 		"test_reads_bottom_post",
 		"email_1_2",
-		[]expectedFragment{
-			{
-				hidden:    false,
-				quoted:    false,
-				signature: false,
-				content:   equalsString("Hi,"),
-			},
-			{
-				hidden:    false,
-				quoted:    true,
-				signature: false,
-				content:   regexp.MustCompile("(?m)^On [^\\:]+\\:"),
-			},
-			{
-				hidden:    false,
-				quoted:    false,
-				signature: false,
-				content:   regexp.MustCompile("(?m)^You can list"),
-			},
-			{
-				hidden:    true,
-				quoted:    true,
-				signature: false,
-				content:   regexp.MustCompile("(?m)^> "),
-			},
-			{
-				hidden:    true,
-				quoted:    false,
-				signature: false,
-				content:   nil,
-			},
-			{
-				hidden:    true,
-				quoted:    false,
-				signature: true,
-				content:   regexp.MustCompile("(?m)^_"),
-			},
+		[]checker{
+			&attributeChecker{"Quoted", []bool{false, true, false, true, false, false}},
+			&attributeChecker{"Signature", []bool{false, false, false, false, false, true}},
+			&attributeChecker{"Hidden", []bool{false, false, false, true, true, true}},
+			&contentChecker{0, equalsString("Hi,")},
+			&contentChecker{1, regexp.MustCompile("(?m)^On [^\\:]+\\:")},
+			&contentChecker{2, regexp.MustCompile("(?m)^You can list")},
+			&contentChecker{3, regexp.MustCompile("(?m)^> ")},
+			&contentChecker{5, regexp.MustCompile("(?m)^_")},
+		},
+	},
+	{
+		"test_recognizes_date_string_above_quote",
+		"email_1_4",
+		[]checker{
+			&contentChecker{0, regexp.MustCompile("(?m)^Awesome")},
+			&contentChecker{1, regexp.MustCompile("(?m)^On")},
+			&contentChecker{1, regexp.MustCompile("Loader")},
 		},
 	},
 }
@@ -133,44 +79,68 @@ func TestParse(t *testing.T) {
 
 		parsed, err := Parse(text)
 		if err != nil {
-
-		}
-		gotCount := len(parsed)
-		expectedCount := len(test.fragments)
-		if gotCount != expectedCount {
-			t.Errorf("wrong fragment count: %d != %d", gotCount, expectedCount)
+			t.Error(err)
 			continue
 		}
 
-		for i, fragment := range parsed {
-			expectedFragment := test.fragments[i]
-			t.Logf("--> fragment #%d", i)
-			if hidden := fragment.Hidden(); hidden != expectedFragment.hidden {
-				t.Errorf("Hidden(): %t != %t", hidden, expectedFragment.hidden)
-			}
-
-			if quoted := fragment.Quoted(); quoted != expectedFragment.quoted {
-				t.Errorf("Quoted(): %t != %t", quoted, expectedFragment.quoted)
-			}
-
-			if signature := fragment.Signature(); signature != expectedFragment.signature {
-				t.Errorf("Signature(): %t != %t", signature, expectedFragment.signature)
-			}
-
-			if expectedFragment.content != nil {
-				if s := fragment.String(); !expectedFragment.content.MatchString(s) {
-					t.Errorf("String(): %q did not match %s", s, expectedFragment.content)
-				}
+		for _, check := range test.checks {
+			if err := check.Check(parsed); err != nil {
+				t.Error(err)
 			}
 		}
 	}
 }
 
-type expectedFragment struct {
-	hidden    bool          // expected Hidden() value
-	quoted    bool          // expected Quoted() value
-	signature bool          // expected Signature() value
-	content   stringMatcher // expected String() value
+type checker interface {
+	Check(email Email) error
+}
+
+type attributeChecker struct {
+	attribute string
+	values    []bool
+}
+
+func (c *attributeChecker) Check(email Email) error {
+	expectedCount := len(c.values)
+	gotCount := len(email)
+	if gotCount != expectedCount {
+		return fmt.Errorf("wrong fragment count: %d != %d", gotCount, expectedCount)
+	}
+
+	for i, fragment := range email {
+		var val bool
+		// could also use reflect, but seems overkill for this
+		switch c.attribute {
+		case "Hidden":
+			val = fragment.Hidden()
+		case "Quoted":
+			val = fragment.Quoted()
+		case "Signature":
+			val = fragment.Signature()
+		default:
+			return fmt.Errorf("Unknown attribute: %s", c.attribute)
+		}
+
+		if val != c.values[i] {
+			return fmt.Errorf("Invalid %s() value in fragment #%d: %t != %t", c.attribute, i, val, c.values[i])
+		}
+	}
+
+	return nil
+}
+
+type contentChecker struct {
+	fragmentId int
+	content    stringMatcher
+}
+
+func (c *contentChecker) Check(email Email) error {
+	fragment := email[c.fragmentId]
+	content := fragment.String()
+	if !c.content.MatchString(content) {
+		return fmt.Errorf("String(): %q did not match %s", content, c.content)
+	}
+	return nil
 }
 
 type stringMatcher interface {
