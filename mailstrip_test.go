@@ -21,7 +21,7 @@ var tests = []struct {
 			&attributeChecker{"Quoted", []bool{false, false, false}},
 			&attributeChecker{"Signature", []bool{false, true, true}},
 			&attributeChecker{"Hidden", []bool{false, true, true}},
-			&contentChecker{0, equalsString(`Hi folks
+			&fragmentStringChecker{0, equalsString(`Hi folks
 
 What is the best way to clear a Riak bucket of all key, values after
 running a test?
@@ -37,10 +37,10 @@ I am currently using the Java HTTP API.
 			&attributeChecker{"Quoted", []bool{false, false, true, false, false}},
 			&attributeChecker{"Hidden", []bool{false, true, true, true, true}},
 			&attributeChecker{"Signature", []bool{false, true, false, false, true}},
-			&contentChecker{0, regexp.MustCompile("(?m)^Oh thanks.\n\nHaving")},
-			&contentChecker{1, regexp.MustCompile("(?m)^-A")},
-			&contentChecker{2, regexp.MustCompile("(?m)^On [^\\:]+\\:")},
-			&contentChecker{4, regexp.MustCompile("^_")},
+			&fragmentStringChecker{0, regexp.MustCompile("(?m)^Oh thanks.\n\nHaving")},
+			&fragmentStringChecker{1, regexp.MustCompile("(?m)^-A")},
+			&fragmentStringChecker{2, regexp.MustCompile("(?m)^On [^\\:]+\\:")},
+			&fragmentStringChecker{4, regexp.MustCompile("^_")},
 		},
 	},
 	{
@@ -50,20 +50,20 @@ I am currently using the Java HTTP API.
 			&attributeChecker{"Quoted", []bool{false, true, false, true, false, false}},
 			&attributeChecker{"Signature", []bool{false, false, false, false, false, true}},
 			&attributeChecker{"Hidden", []bool{false, false, false, true, true, true}},
-			&contentChecker{0, equalsString("Hi,")},
-			&contentChecker{1, regexp.MustCompile("(?m)^On [^\\:]+\\:")},
-			&contentChecker{2, regexp.MustCompile("(?m)^You can list")},
-			&contentChecker{3, regexp.MustCompile("(?m)^> ")},
-			&contentChecker{5, regexp.MustCompile("(?m)^_")},
+			&fragmentStringChecker{0, equalsString("Hi,")},
+			&fragmentStringChecker{1, regexp.MustCompile("(?m)^On [^\\:]+\\:")},
+			&fragmentStringChecker{2, regexp.MustCompile("(?m)^You can list")},
+			&fragmentStringChecker{3, regexp.MustCompile("(?m)^> ")},
+			&fragmentStringChecker{5, regexp.MustCompile("(?m)^_")},
 		},
 	},
 	{
 		"test_recognizes_date_string_above_quote",
 		"email_1_4",
 		[]checker{
-			&contentChecker{0, regexp.MustCompile("(?m)^Awesome")},
-			&contentChecker{1, regexp.MustCompile("(?m)^On")},
-			&contentChecker{1, regexp.MustCompile("Loader")},
+			&fragmentStringChecker{0, regexp.MustCompile("(?m)^Awesome")},
+			&fragmentStringChecker{1, regexp.MustCompile("(?m)^On")},
+			&fragmentStringChecker{1, regexp.MustCompile("Loader")},
 		},
 	},
 	{
@@ -78,26 +78,31 @@ I am currently using the Java HTTP API.
 			&attributeChecker{"Quoted", []bool{false, false}},
 			&attributeChecker{"Signature", []bool{false, true}},
 			&attributeChecker{"Hidden", []bool{false, true}},
-			&contentChecker{1, regexp.MustCompile("(?m)^-- \nrick")},
+			&fragmentStringChecker{1, regexp.MustCompile("(?m)^-- \nrick")},
 		},
 	},
 	{
 		"test_deals_with_multiline_reply_headers",
 		"email_1_6",
 		[]checker{
-			&contentChecker{0, regexp.MustCompile("(?m)^I get")},
-			&contentChecker{1, regexp.MustCompile("(?m)^On")},
-			&contentChecker{1, regexp.MustCompile("Was this")},
+			&fragmentStringChecker{0, regexp.MustCompile("(?m)^I get")},
+			&fragmentStringChecker{1, regexp.MustCompile("(?m)^On")},
+			&fragmentStringChecker{1, regexp.MustCompile("Was this")},
 		},
 	},
 	{
 		"test_deals_with_windows_line_endings",
 		"email_1_7",
 		[]checker{
-			&contentChecker{0, regexp.MustCompile(":\\+1:")},
-			&contentChecker{1, regexp.MustCompile("(?m)^On")},
-			&contentChecker{1, regexp.MustCompile("Steps 0-2")},
+			&fragmentStringChecker{0, regexp.MustCompile(":\\+1:")},
+			&fragmentStringChecker{1, regexp.MustCompile("(?m)^On")},
+			&fragmentStringChecker{1, regexp.MustCompile("Steps 0-2")},
 		},
+	},
+	{
+		"test_returns_only_the_visible_fragments_as_a_string",
+		"email_2_1",
+		[]checker{&emailStringChecker{equalsString("Outlook with a reply")}},
 	},
 }
 
@@ -162,16 +167,28 @@ func (c *attributeChecker) Check(email Email) error {
 	return nil
 }
 
-type contentChecker struct {
+type emailStringChecker struct {
+	content stringMatcher
+}
+
+func (c *emailStringChecker) Check(email Email) error {
+	content := email.String()
+	if !c.content.MatchString(content) {
+		return fmt.Errorf("email String(): %q did not match %#v", content, c.content)
+	}
+	return nil
+}
+
+type fragmentStringChecker struct {
 	fragmentId int
 	content    stringMatcher
 }
 
-func (c *contentChecker) Check(email Email) error {
+func (c *fragmentStringChecker) Check(email Email) error {
 	fragment := email[c.fragmentId]
 	content := fragment.String()
 	if !c.content.MatchString(content) {
-		return fmt.Errorf("String(): %q did not match %s", content, c.content)
+		return fmt.Errorf("fragment %d String(): %q did not match %s", c.fragmentId, content, c.content)
 	}
 	return nil
 }

@@ -205,7 +205,18 @@ type Email []*Fragment
 
 // String returns the non-Hidden() fragments of the Email.
 func (e Email) String() string {
-	return ""
+	results := []string{}
+	for _, fragment := range e {
+		if fragment.Hidden() {
+			continue
+		}
+
+		results = append(results, fragment.String())
+	}
+
+	result := strings.Join(results, "\n")
+	result = strings.TrimRightFunc(result, unicode.IsSpace)
+	return result
 }
 
 type Fragment struct {
