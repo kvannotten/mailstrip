@@ -236,7 +236,7 @@ type emailStringChecker struct {
 func (c *emailStringChecker) Check(email Email) error {
 	content := email.String()
 	if !c.content.MatchString(content) {
-		return fmt.Errorf("email String(): %q did not match %#v", content, c.content)
+		return fmt.Errorf("email String(): %q did not match %T(%s)", content, c.content, c.content)
 	}
 	return nil
 }
