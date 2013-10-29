@@ -23,4 +23,4 @@ MIT License. See LICENSE file.
 
 [1]: https://github.com/github/email_reply_parser
 [2]: http://golang.org/
-[3]: https://github.com/ThomsonReutersEikon/mailstrip/commit/b425a7274595ce1f455d80f68171e32c7474d515
+[3]: https://github.com/ThomsonReutersEikon/mailstrip/commit/d321c10543f77c0beaacb40b04511e619f0652c6
