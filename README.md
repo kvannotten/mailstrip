@@ -10,7 +10,7 @@ Most of mailstrip is a line-by-line port of email\_reply\_parser and it passes
 all tests from the email\_reply\_parser test suite.
 
 Additionally mailstrip detects forwarded fragments and considers them to be
-visible text, see d321c10543f77c0beaacb40b04511e619f0652c6.
+visible text, see [d321c1][3].
 
 ## Documentation
 
@@ -23,3 +23,4 @@ MIT License. See LICENSE file.
 
 [1]: https://github.com/github/email_reply_parser
 [2]: http://golang.org/
+[3]: https://github.com/ThomsonReutersEikon/mailstrip/commit/b425a7274595ce1f455d80f68171e32c7474d515
