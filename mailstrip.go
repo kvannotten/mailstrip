@@ -47,6 +47,7 @@ type parser struct {
 var (
 	multiLineReplyHeaderRegexp = regexp.MustCompile("(?sm)^(On\\s(?:.+)wrote:)$")
 	sigRegexp                  = regexp.MustCompile("(--|__|(?m)\\w-$)|(?m)(^(\\w+\\s*){1,3} " + reverseString("Sent from my") + "$)")
+	fwdRegexp                  = regexp.MustCompile("(?mi)^--+\\s*" + reverseString("Forwarded message") + "\\s*--+$")
 	quotedRegexp               = regexp.MustCompile("(?m)(>+)$")
 	quoteHeaderRegexp          = regexp.MustCompile("(?m)^:etorw.*nO$")
 )
@@ -89,6 +90,7 @@ func (p *parser) Parse(text string) (Email, error) {
 // belongs to.
 func (p *parser) scanLine(line string) {
 	sigMatch := sigRegexp.MatchString(line)
+
 	if !sigMatch {
 		line = strings.TrimLeftFunc(line, unicode.IsSpace)
 	}
@@ -100,8 +102,13 @@ func (p *parser) scanLine(line string) {
 	// Mark the current Fragment as a signature if the current line is empty
 	// and the Fragment starts with a common signature indicator.
 	if p.fragment != nil && line == "" {
+		// lastLine is really the first line, since the lines are still reversed
+		// at this point.
 		lastLine := p.fragment.lines[len(p.fragment.lines)-1]
-		if sigRegexp.MatchString(lastLine) {
+		if fwdRegexp.MatchString(lastLine) {
+			p.fragment.forwarded = true
+			p.finishFragment()
+		} else if sigRegexp.MatchString(lastLine) {
 			p.fragment.signature = true
 			p.finishFragment()
 		}
@@ -202,6 +209,7 @@ type Fragment struct {
 	content   string
 	hidden    bool
 	signature bool
+	forwarded bool
 	quoted    bool
 }
 
@@ -210,6 +218,11 @@ func (f *Fragment) finish() {
 	f.content = strings.Join(f.lines, "\n")
 	f.lines = nil
 	f.content = reverseString(f.content)
+}
+
+// Forwarded returns if the fragment is forwarded or not.
+func (f *Fragment) Forwarded() bool {
+	return f.forwarded
 }
 
 // Signature returns if the fragment is a signature or not.

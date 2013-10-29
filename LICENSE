@@ -24,9 +24,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -------------------------------------------------------------------------------
 
-The content of the fixtures directory, as well as the comments are copied from
-email_reply_parser. Most of the code itself is a line-by-line port, and is
-therefor likely to be considered a derivate work:
+The content of the fixtures directory (as imported in 78ad5d), as well as the
+comments are copied from email_reply_parser. Most of the code itself is a
+line-by-line port, and is therefor likely to be considered a derivate work:
 -------------------------------------------------------------------------------
 The MIT License
 

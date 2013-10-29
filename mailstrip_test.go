@@ -150,6 +150,20 @@ I am currently using the Java HTTP API.
 			&fragmentStringChecker{1, regexp.MustCompile("(?m)^On Oct 1, 2012")},
 		},
 	},
+
+	// the tests below are mailstrip specific
+	{
+		"forward text should be non-Hidden()",
+		"forward",
+		[]checker{
+			&emailStringChecker{regexp.MustCompile("(?m).*check out the joke below.*")},
+			&emailStringChecker{regexp.MustCompile("(?m).*You must work in management.*")},
+			&attributeChecker{"Quoted", []bool{false, false}},
+			&attributeChecker{"Hidden", []bool{false, false}},
+			&attributeChecker{"Signature", []bool{false, false}},
+			&attributeChecker{"Forwarded", []bool{false, true}},
+		},
+	},
 }
 
 func TestParse(t *testing.T) {
@@ -217,6 +231,8 @@ func (c *attributeChecker) Check(email Email) error {
 			val = fragment.Quoted()
 		case "Signature":
 			val = fragment.Signature()
+		case "Forwarded":
+			val = fragment.Forwarded()
 		default:
 			return fmt.Errorf("Unknown attribute: %s", c.attribute)
 		}
