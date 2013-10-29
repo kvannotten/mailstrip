@@ -4,8 +4,13 @@ mailstrip is a [Go][2] library that parses email text and strips it of
 signatures and reply quotes. It is a port of [email\_reply\_parser][1], GitHub's
 library for parsing email replies.
 
-At this point mailstrip is 100% line-by-line port, including the test suite.
-However, this may change in the future.
+## Differences to email_reply_parser
+
+Most of mailstrip is a line-by-line port of email\_reply\_parser and it passes
+all tests from the email\_reply\_parser test suite.
+
+Additionally mailstrip detects forwarded fragments and considers them to be
+visible text, see d321c10543f77c0beaacb40b04511e619f0652c6.
 
 ## Documentation
 
