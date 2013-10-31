@@ -7,15 +7,15 @@ package mailstrip
 
 import (
 	"bufio"
+	"fmt"
+	"io"
 	"regexp"
 	"strings"
 	"unicode"
 )
 
-// Parse parses a plaintext email and returns the results. May return an error
-// if the text contains a very long line (> bufio.MaxScanTokenSize, currently
-// 64 * 1024).
-func Parse(text string) (Email, error) {
+// Parse parses a plaintext email and returns the results.
+func Parse(text string) (Email) {
 	p := &parser{}
 	return p.Parse(text)
 }
@@ -52,7 +52,7 @@ var (
 	quoteHeaderRegexp          = regexp.MustCompile("(?m)^:etorw.*nO$")
 )
 
-func (p *parser) Parse(text string) (Email, error) {
+func (p *parser) Parse(text string) (Email) {
 	// Normalize line endings.
 	text = strings.Replace(text, "\r\n", "\n", -1)
 
@@ -67,10 +67,18 @@ func (p *parser) Parse(text string) (Email, error) {
 	// fragments.
 	text = reverseString(text)
 
-	// Use the StringScanner to pull out each line of the email content.
-	scanner := bufio.NewScanner(strings.NewReader(text))
-	for scanner.Scan() {
-		p.scanLine(scanner.Text())
+	// Use the Reader to pull out each line of the email content.
+	reader := bufio.NewReader(strings.NewReader(text))
+	for {
+		line, e := reader.ReadBytes('\n')
+		p.scanLine(strings.TrimRight(string(line), "\n"))
+		if e == io.EOF {
+			break
+		} else if e != nil {
+			// Our underlaying reader is a strings.Reader, which will never return
+			// errors other than io.EOF, so this is merely a sanity check.
+			panic(fmt.Sprintf("Bug: ReadBytes returned an error other than io.EOF: %#v", e))
+		}
 	}
 
 	// Finish up the final fragment.  Finishing a fragment will detect any
@@ -80,10 +88,7 @@ func (p *parser) Parse(text string) (Email, error) {
 
 	// Now that parsing is done, reverse the order.
 	reverseFragments(p.fragments)
-
-	// We might get a bufio.ErrTooLong here.
-	err := scanner.Err()
-	return Email(p.fragments), err
+	return Email(p.fragments)
 }
 
 // scaneLine scans the given line of text and figures out which fragment it

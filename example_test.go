@@ -16,12 +16,8 @@ On 01/03/11 7:07 PM, Alice wrote:
 > can I push the latest release later tonight?
 `
 
-	email, err := Parse(text)
-	if err != nil {
-		fmt.Printf("err: %#v\n", err)
-	} else {
-		fmt.Printf("result: %q\n", email.String())
-	}
+	email := Parse(text)
+	fmt.Printf("result: %q\n", email.String())
 	// Output:
 	// result: "Yeah, that works!"
 }
