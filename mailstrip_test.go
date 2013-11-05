@@ -162,6 +162,18 @@ I am currently using the Java HTTP API.
 			&attributeChecker{"Forwarded", []bool{false, true}},
 		},
 	},
+
+	{
+		"yahoo reply quotes should be handled",
+		"yahoo",
+		[]checker{
+			&emailStringChecker{equalsString("who is using yahoo?")},
+			&attributeChecker{"Quoted", []bool{false, true}},
+			&attributeChecker{"Hidden", []bool{false, true}},
+			&attributeChecker{"Signature", []bool{false, false}},
+			&attributeChecker{"Forwarded", []bool{false, false}},
+		},
+	},
 }
 
 func TestParse(t *testing.T) {

@@ -119,12 +119,20 @@ func (p *parser) scanLine(line string) {
 		}
 	}
 
+	isQuoteHeader := p.quoteHeader(line)
+	// Yahoo! does not use '>' quote indicator in replies, so if a quote header
+	// suddenly appears in an otherwise unquoted fragment, consider it quoted
+	// now.
+	if p.fragment != nil && isQuoteHeader {
+		p.fragment.quoted = true
+	}
+
 	// If the line matches the current fragment, add it.  Note that a common
 	// reply header also counts as part of the quoted Fragment, even though
 	// it doesn't start with `>`.
 	if p.fragment != nil &&
 		((p.fragment.quoted == isQuoted) ||
-			(p.fragment.quoted && (p.quoteHeader(line) || line == ""))) {
+			(p.fragment.quoted && (isQuoteHeader || line == ""))) {
 		p.fragment.lines = append(p.fragment.lines, line)
 
 		// Otherwise, finish the fragment and start a new one.
