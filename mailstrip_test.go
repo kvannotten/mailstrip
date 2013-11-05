@@ -185,10 +185,20 @@ func TestParse(t *testing.T) {
 			continue
 		}
 
-		parsed := Parse(text)
+		var (
+			parsed   = Parse(text)
+			hadError = false
+		)
 		for _, check := range test.checks {
 			if err := check.Check(parsed); err != nil {
+				hadError = true
 				t.Error(err)
+			}
+		}
+
+		if hadError {
+			for i, fragment := range parsed {
+				t.Logf("fragment #%d: %#v", i, fragment)
 			}
 		}
 	}
