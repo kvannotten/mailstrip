@@ -13,7 +13,7 @@ a few improvements that are not part of email\_reply\_parser:
 * Forwarded fragments are detected and considered to be visible text, see
   [d321c1][3].
 * Replies from Yahoo! which lack ">" quote indicators are handled correctly,
-  see [e844d][4]:
+  see [e844d][4].
 
 ## Documentation
 
