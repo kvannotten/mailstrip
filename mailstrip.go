@@ -45,22 +45,31 @@ type parser struct {
 // - Ruby's multiline mode "/m" is the same as Go's "(?s)" flag. Both are used
 //   to make "." match "\n" characters.
 var (
-	multiLineReplyHeaderRegexp = regexp.MustCompile("(?sm)^(On\\s(?:.+)wrote:)$")
-	sigRegexp                  = regexp.MustCompile("(--|__|(?m)\\w-$)|(?m)(^(\\w+\\s*){1,3} " + reverseString("Sent from my") + "$)")
-	fwdRegexp                  = regexp.MustCompile("(?mi)^--+\\s*" + reverseString("Forwarded message") + "\\s*--+$")
-	quotedRegexp               = regexp.MustCompile("(?m)(>+)$")
-	quoteHeaderRegexp          = regexp.MustCompile("(?m)^:etorw.*nO$")
+	// used to join quote headers that were broken into multiple lines by the
+	// e-mail client. e.g. gmail does that for lines exceeding 80 chars
+	multiLineReplyHeaderRegexps = []*regexp.Regexp{
+		// e.g. On Aug 22, 2011, at 7:37 PM, defunkt<reply@reply.github.com> wrote:
+		regexp.MustCompile("(?sm)^(On\\s(?:.+)wrote:)$"),
+		// e.g. 2013/11/13 John Smith <john@smith.org>
+		regexp.MustCompile("(?sm)^(\\d{4}/\\d{2}/\\d{2} .*<.+@.+>)$"),
+	}
+	sigRegexp         = regexp.MustCompile("(--|__|(?m)\\w-$)|(?m)(^(\\w+\\s*){1,3} " + reverseString("Sent from my") + "$)")
+	fwdRegexp         = regexp.MustCompile("(?mi)^--+\\s*" + reverseString("Forwarded message") + "\\s*--+$")
+	quotedRegexp      = regexp.MustCompile("(?m)(>+)$")
+	quoteHeaderRegexp = regexp.MustCompile("(?m)^:etorw.*nO$|^>.*\\d{2}/\\d{2}/\\d{4}$")
 )
 
-func (p *parser) Parse(text string) (Email) {
+func (p *parser) Parse(text string) Email {
 	// Normalize line endings.
 	text = strings.Replace(text, "\r\n", "\n", -1)
 
-	// Check for multi-line reply headers. Some clients break up
-	// the "On DATE, NAME <EMAIL> wrote:" line into multiple lines.
-	if m := multiLineReplyHeaderRegexp.FindStringSubmatch(text); len(m) == 2 {
-		// Remove all new lines from the reply header.
-		text = strings.Replace(text, m[1], strings.Replace(m[1], "\n", "", -1), -1)
+	// Check for multi-line reply headers. Some clients break up the "On DATE,
+	// NAME <EMAIL> wrote:" line (and similar quote headers) into multiple lines.
+	for _, r := range multiLineReplyHeaderRegexps {
+		if m := r.FindStringSubmatch(text); len(m) == 2 {
+			// Remove all new lines from the reply header.
+			text = strings.Replace(text, m[1], strings.Replace(m[1], "\n", "", -1), -1)
+		}
 	}
 
 	// The text is reversed initially due to the way we check for hidden

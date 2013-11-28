@@ -173,6 +173,13 @@ I am currently using the Java HTTP API.
 			&attributeChecker{"Forwarded", []bool{false, false}},
 		},
 	},
+	{
+		"gmail alternative quote header should be handled",
+		"gmail_alt_quoteheader",
+		[]checker{
+			&emailStringChecker{equalsString("Fine, and you?")},
+		},
+	},
 }
 
 func TestParse(t *testing.T) {
