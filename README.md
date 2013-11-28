@@ -14,6 +14,8 @@ a few improvements that are not part of email\_reply\_parser:
   [d321c1][3].
 * Replies from Yahoo! which lack ">" quote indicators are handled correctly,
   see [e844d][4].
+* Alternative quote headers used by gmail are handled correctly, see
+  [7ecb6][5]
 
 ## Documentation
 
@@ -28,3 +30,4 @@ MIT License. See LICENSE file.
 [2]: http://golang.org/
 [3]: https://github.com/ThomsonReutersEikon/mailstrip/commit/d321c10543f77c0beaacb40b04511e619f0652c6
 [4]: https://github.com/ThomsonReutersEikon/mailstrip/commit/e844df52342787c3cf2e0ebb8850b16e35f7f437
+[5]: https://github.com/ThomsonReutersEikon/mailstrip/commit/7ecb608981016c5633575cb93abb00e4c7370bcf
