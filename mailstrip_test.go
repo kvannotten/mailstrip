@@ -162,7 +162,6 @@ I am currently using the Java HTTP API.
 			&attributeChecker{"Forwarded", []bool{false, true}},
 		},
 	},
-
 	{
 		"yahoo reply quotes should be handled",
 		"yahoo",

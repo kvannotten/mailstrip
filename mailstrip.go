@@ -15,7 +15,7 @@ import (
 )
 
 // Parse parses a plaintext email and returns the results.
-func Parse(text string) (Email) {
+func Parse(text string) Email {
 	p := &parser{}
 	return p.Parse(text)
 }
