@@ -51,12 +51,12 @@ var (
 		// e.g. On Aug 22, 2011, at 7:37 PM, defunkt<reply@reply.github.com> wrote:
 		regexp.MustCompile("(?sm)^(On\\s(?:.+)wrote:)$"),
 		// e.g. 2013/11/13 John Smith <john@smith.org>
-		regexp.MustCompile("(?sm)^(\\d{4}/\\d{2}/\\d{2} .*<.+@.+>)$"),
+		regexp.MustCompile("(?sm)^(\\d{4}/\\d{1,2}/\\d{1,2} .*<.+@.+>)$"),
 	}
 	sigRegexp         = regexp.MustCompile("(--|__|(?m)\\w-$)|(?m)(^(\\w+\\s*){1,3} " + reverseString("Sent from my") + "$)")
 	fwdRegexp         = regexp.MustCompile("(?mi)^--+\\s*" + reverseString("Forwarded message") + "\\s*--+$")
 	quotedRegexp      = regexp.MustCompile("(?m)(>+)$")
-	quoteHeaderRegexp = regexp.MustCompile("(?m)^:etorw.*nO$|^>.*\\d{2}/\\d{2}/\\d{4}$")
+	quoteHeaderRegexp = regexp.MustCompile("(?m)^:etorw.*nO$|^>.*\\d{1,2}/\\d{1,2}/\\d{4}$")
 )
 
 func (p *parser) Parse(text string) Email {
