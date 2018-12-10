@@ -21,7 +21,7 @@ a few improvements that are not part of email\_reply\_parser:
 ## Documentation
 
 The API documentation can be found here:
-http://godoc.org/github.com/ThomsonReutersEikon/mailstrip
+http://godoc.org/github.com/kvannotten/mailstrip
 
 ## License
 
@@ -29,6 +29,6 @@ MIT License. See LICENSE file.
 
 [1]: https://github.com/github/email_reply_parser
 [2]: http://golang.org/
-[3]: https://github.com/ThomsonReutersEikon/mailstrip/commit/d321c10543f77c0beaacb40b04511e619f0652c6
-[4]: https://github.com/ThomsonReutersEikon/mailstrip/commit/e844df52342787c3cf2e0ebb8850b16e35f7f437
-[5]: https://github.com/ThomsonReutersEikon/mailstrip/commit/7ecb608981016c5633575cb93abb00e4c7370bcf
+[3]: https://github.com/kvannotten/mailstrip/commit/d321c10543f77c0beaacb40b04511e619f0652c6
+[4]: https://github.com/kvannotten/mailstrip/commit/e844df52342787c3cf2e0ebb8850b16e35f7f437
+[5]: https://github.com/kvannotten/mailstrip/commit/7ecb608981016c5633575cb93abb00e4c7370bcf
