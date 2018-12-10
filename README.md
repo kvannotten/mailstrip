@@ -16,6 +16,7 @@ a few improvements that are not part of email\_reply\_parser:
   see [e844d][4].
 * Alternative quote headers used by gmail are handled correctly, see
   [7ecb6][5]
+* Replies from Google inbox / gmail that has a quoute header in swedish(and possibly other languages) are handled.
 
 ## Documentation
 
