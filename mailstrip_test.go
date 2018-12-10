@@ -114,6 +114,11 @@ I am currently using the Java HTTP API.
 		[]checker{&emailStringChecker{equalsString("Outlook with a reply")}},
 	},
 	{
+		"test_parse_out_just_top_for_inbox_reply_swe",
+		"email_2_2",
+		[]checker{&emailStringChecker{equalsString("shysst! Vad är du beredd att betala då ?")}},
+	},
+	{
 		"test_parse_out_sent_from_iPhone",
 		"email_iPhone",
 		[]checker{&emailStringChecker{equalsString("Here is another email")}},
