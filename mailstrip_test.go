@@ -119,6 +119,11 @@ I am currently using the Java HTTP API.
 		[]checker{&emailStringChecker{equalsString("shysst! Vad är du beredd att betala då ?")}},
 	},
 	{
+		"test_outlook_win10_reply",
+		"email_2_3",
+		[]checker{&emailStringChecker{equalsString("Outlook message reply test")}},
+	},
+	{
 		"test_parse_out_sent_from_iPhone",
 		"email_iPhone",
 		[]checker{&emailStringChecker{equalsString("Here is another email")}},
@@ -190,6 +195,7 @@ I am currently using the Java HTTP API.
 func TestParse(t *testing.T) {
 	for _, test := range tests {
 		t.Logf("===== %s =====", test.name)
+
 		text, err := loadFixture(test.fixture)
 		if err != nil {
 			t.Errorf("could not load fixture: %s", err)

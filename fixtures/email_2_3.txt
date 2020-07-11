@@ -1,0 +1,15 @@
+Outlook message reply test
+
+Sent from Mail<https://go.microsoft.com/fwlink/?LinkId=550123> for Windows 10
+
+From: Support<mailto:support@test.com>
+Sent: 10 July 2020 09:46
+Subject: Support - test ticket no. 3
+
+
+Alan Smith has created the support ticket test ticket no. 3<https://test.co.uk/support/edit/345>.
+
+You are set as the handler for this ticket.
+
+outlook test
+jjsid345jjsid jjsurlhttps://test.co.uk/support/edit/345jjsurl

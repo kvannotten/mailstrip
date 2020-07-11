@@ -53,7 +53,7 @@ var (
 		// e.g. 2013/11/13 John Smith <john@smith.org>
 		regexp.MustCompile("(?sm)^(\\d{4}/\\d{1,2}/\\d{1,2} .*<.+@.+>)$"),
 	}
-	sigRegexp         = regexp.MustCompile("(--|__|(?m)\\w-$)|(?m)(^(\\w+\\s*){1,3} " + reverseString("Sent from my") + "$)")
+	sigRegexp         = regexp.MustCompile("(\\d+ swodniW rof >.*<liaM morf tneS|--|__|(?m)\\w-$)|(?m)(^(\\w+\\s*){1,3} " + reverseString("Sent from my") + "$)")
 	fwdRegexp         = regexp.MustCompile("(?mi)^--+\\s*" + reverseString("Forwarded message") + "\\s*--+$")
 	quotedRegexp      = regexp.MustCompile("(?m)(>+)$")
 	quoteHeaderRegexp = regexp.MustCompile("(?m)^:etorw.*nO$|^.*[0-9]{4}\\s\\.\\w{2,4}\\s\\d{1,2}\\s.{3,4}$|^\\w{3,4}\\s\\d{1,2}\\s\\w{3,4}\\.\\s[0-9]{4}.*$|^>.*\\d{1,2}/\\d{1,2}/\\d{4}$|^(?m)^.*?[0-9]{4}\\s\\.\\w+\\s\\d\\s.*n\\.*$")
